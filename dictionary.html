@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link rel="stylesheet" href="dictionary.css">
+</head>
+<body>
+   <h1 id="h">KNOW the meaning</h1>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" placeholder="Type the word.." id="inp-word"/>
+            <button id="search-btn">Search</button>
+        </div>
+        <div class="result" id="result">
+           
+        </div>
+    </div>
+    <script>
+        const url = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+        const result = document.getElementById("result");
+        const sound = document.getElementById("sound");
+        const btn = document.getElementById("search-btn");
+        btn.addEventListener("click", () => {
+            let inpword = document.getElementById("inp-word").value;
+            fetch(`${url}${inpword}`)
+            .then(response => response.json())
+            .then(data => {
+                result.innerHTML = `
+                    <div class="word">
+                        <h3>${inpword}</h3>
+                        <button onclick="speaking()">listen meaning</button>
+                    </div>
+                    <div class="details">
+                        <p>${data[0].meanings[0].partOfSpeech}</p>
+                        <p>/${data[0].phonetic}/</p>
+                    </div>
+                    <p class="word-meaning" id="mean">${data[0].meanings[0].definitions[0].definition}</p>
+                    <p class="word-example">${data[0].meanings[0].definitions[0].example || ""}</p>
+                `;
+            })
+            .catch(() => {
+                result.innerHTML = "<h3>Can't find meaning or word</h3>";
+            });
+        });
+        function speaking() {
+    const synth = window.speechSynthesis;
+    var chatArea = document.getElementById('mean');
+    var latestBotMessage = chatArea.innerHTML; 
+
+    const text = latestBotMessage;
+
+    if (text !== '') {
+        const utterThis = new SpeechSynthesisUtterance(text);
+        synth.speak(utterThis);
+    } else {
+        alert('enter a correct word');
+    }
+}
+    </script>
+</body>
+</html>
